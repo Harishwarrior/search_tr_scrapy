@@ -11,22 +11,21 @@ class TamilDubbedSpider(BaseTRSpider):
     def start_requests(self):
         self.process_title()
 
-        urls = ['https://tamilrockers.ws/index.php/forum/114-tamil-dubbed-movies-multi-lang-bd-'
-                'hd-tc-cam/page-1?prune_day=100&sort_by=Z-A&sort_key=last_post&topicfilter=all']
+        urls = ['https://tamilblasters.vip/index.php?/forums/forum/9-dubbed-movies-bdrips-hdrips-dvdscr-hdcam-in-multi-audios/']
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        for quote in response.css('tr[class="__topic  expandable"]'):
+        for quote in response.css('h4[class="ipsDataItem_title ipsContained_container"]'):
             movie_title = quote.css(
-                'td.col_f_content h4 a span::text').extract()[0]
+                'a span::text').extract()[0]
             movie_url = quote.css(
-                'td.col_f_content h4 a::attr(href)').extract()[0]
+                'a::attr(href)').extract()[0]
 
             # Process movie title and url
             self.parse_movie_url(movie_title, movie_url)
 
-        np = response.css('li.next a::attr(href)').get()
+        np = response.css('li.ipsPagination_page a::attr(href)').get()
         if np is not None:
             next_page = response.urljoin(np)
             yield scrapy.Request(next_page, callback=self.parse)
