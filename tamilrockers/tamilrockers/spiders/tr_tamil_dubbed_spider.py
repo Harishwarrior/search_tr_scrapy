@@ -25,7 +25,9 @@ class TamilDubbedSpider(BaseTRSpider):
             # Process movie title and url
             self.parse_movie_url(movie_title, movie_url)
 
-        np = response.css('li.ipsPagination_page a::attr(href)').get()
+          
+
+        np = response.css('li.ipsPagination_next a::attr(href)').get()
         if np is not None:
             next_page = response.urljoin(np)
             yield scrapy.Request(next_page, callback=self.parse)
